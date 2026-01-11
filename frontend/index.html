@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Character Shop DApp - Buy unique NFT-like characters on the blockchain">
+    <title>Character Shop - NFT DApp</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Header Section -->
+    <header class="header">
+        <div class="header-content">
+            <h1 class="logo">Character Shop</h1>
+            <div class="wallet-section">
+                <span id="wallet-status" class="wallet-status">Not Connected</span>
+                <button id="connect-btn" class="btn btn-primary">Connect Wallet</button>
+            </div>
+        </div>
+    </header>
+
+    
+    <main class="main-content">
+        
+        <section class="shop-section">
+            <h2 class="section-title">Available Characters</h2>
+            <p class="section-subtitle">Each character is unique and can only be owned by one person!</p>
+            
+            
+            <div id="characters-grid" class="characters-grid">
+                
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Loading characters...</p>
+                </div>
+            </div>
+        </section>
+
+    
+        <section class="logs-section">
+            <h2 class="section-title">Ownership Logs</h2>
+            <p class="section-subtitle">Real-time purchase history</p>
+            
+            <div class="table-container">
+                <table class="logs-table">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Character</th>
+                            <th>Owner Address</th>
+                        </tr>
+                    </thead>
+                    <tbody id="logs-body">
+                        <tr class="empty-row">
+                            <td colspan="3">No purchases yet. Be the first to own a character!</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    
+    <footer class="footer">
+        <p>&copy; B6614690 CharacterShop DApp. Built with Solidity & Ethers.js</p>
+    </footer>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
