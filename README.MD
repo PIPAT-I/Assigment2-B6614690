@@ -1,16 +1,34 @@
-# Character Shop DApp
+#  Character Shop DApp
 
-ระบบร้านขายตัวละครบน Blockchain ที่ใช้ Smart Contract ในการจัดการการซื้อขาย สามารถซื้อตัวละครได้ไม่จำกัดครั้ง พร้อมแสดงประวัติการซื้อแบบ Real-time
+ระบบร้านขายตัวละครแบบ NFT บน Blockchain ที่ใช้ Smart Contract ในการจัดการความเป็นเจ้าของ แต่ละตัวละครมีเจ้าของได้คนเดียว และ 1 account สามารถเป็นเจ้าของได้หลายตัวละคร
+
+---
+
+## 1. ภาพรวมของระบบ
+
+Character Shop DApp เป็นเว็บแอปพลิเคชันแบบ Decentralized ที่ทำงานบน Ethereum Blockchain สำหรับซื้อขายตัวละครเสมือนแบบ NFT โดยใช้ Smart Contract ในการจัดการธุรกรรมทั้งหมด ระบบประกอบด้วยตัวละคร 10 ตัว ที่แต่ละตัวมีเจ้าของได้คนเดียว และ 1 account สามารถเป็นเจ้าของได้หลายตัว พร้อมบันทึกประวัติการซื้อขายบน Blockchain
+
+## 2. Contract Address
+
+- **Contract Address:** `0x6E943EE7AEC24Ac1f32a09a756103D29BecfA931`
+- **Network:** Sepolia Testnet
+
+## 3. การทำงานของระบบ
+
+เมื่อผู้ใช้เปิดหน้าเว็บจะพบปุ่ม Connect Wallet สำหรับเชื่อมต่อ MetaMask ผ่าน Ethers.js เมื่อเชื่อมต่อสำเร็จ ระบบจะเรียกฟังก์ชัน getAllCharacters() จาก Smart Contract เพื่อดึงข้อมูลตัวละครทั้ง 10 ตัวมาแสดงผลเป็น Card พร้อมรูปภาพ ชื่อ ราคา และสถานะ (AVAILABLE/SOLD/OWNED) เมื่อผู้ใช้ต้องการซื้อตัวละครที่ยังว่างก็กดปุ่ม Buy Now ซึ่งจะเรียกฟังก์ชัน buyCharacter(id) พร้อมส่ง ETH ตามราคา Smart Contract จะตรวจสอบว่าตัวละครยังไม่มีเจ้าของแล้วอัปเดตเจ้าของและสถานะ isSold พร้อม Emit Event เพื่อบันทึกธุรกรรม ทั้งนี้ระบบยังดึงประวัติการซื้อย้อนหลังผ่าน queryFilter() และฟัง Event แบบ Real-time ผ่าน contract.on() เพื่อแสดงในตาราง Ownership Logs โดยไม่ต้อง Refresh หน้า
+
+**REPO:** [GitHub - PIPAT-I/Assigment2-B6614690](https://github.com/PIPAT-I/Assigment2-B6614690) ข้อมูลโดยละเอียดจะอยู่ใน repository นี้
 
 ---
 
 ##  ระบบทำอะไร
 
 - **ร้านขายตัวละคร 10 ตัว** บน Ethereum Blockchain
-- **ซื้อซ้ำได้ไม่จำกัด** - ทุกคนสามารถซื้อตัวละครเดียวกันได้
+- **NFT Ownership** - แต่ละตัวละครมีเจ้าของได้คนเดียว ซื้อแล้วคนอื่นซื้อไม่ได้
+- **1 Account ซื้อได้หลายตัว** - สะสม collection ของตัวเอง
 - **บันทึกประวัติการซื้อ** - ระบบ Event Logs แสดงประวัติการซื้อแบบ Real-time
 - **เชื่อมต่อ MetaMask Wallet** - ใช้ Wallet ในการทำธุรกรรม
-- **แสดงข้อมูลเจ้าของล่าสุด** - ดูได้ว่าใครซื้อล่าสุดและจำนวนครั้งที่ถูกซื้อ
+- **แสดงสถานะตัวละคร** - AVAILABLE / SOLD / OWNED
 
 ---
 
@@ -31,9 +49,7 @@
 1. เปิดไฟล์ `frontend/app.js`
 2. แก้ไข `contractAddress` เป็น Address ที่ได้จากการ Deploy
 ```javascript
-const contractAddress = "YOUR_CONTRACT_ADDRESS_HERE";
-// ตอนนี้เป็น
-contractAddress =0xD18266E75Cc920f0Ba0003091B627d8E381C83aC
+const contractAddress = "0x6E943EE7AEC24Ac1f32a09a756103D29BecfA931";
 ```
 
 ### 4. รันเว็บไซต์
@@ -47,8 +63,9 @@ npx serve .
 ### 5. ซื้อตัวละคร
 1. กดปุ่ม **Connect Wallet**
 2. อนุมัติการเชื่อมต่อใน MetaMask
-3. เลือกตัวละครที่ต้องการ กดปุ่ม **Buy Now**
+3. เลือกตัวละครที่ยังว่าง (AVAILABLE) กดปุ่ม **Buy Now**
 4. ยืนยันธุรกรรมใน MetaMask
+5. เมื่อซื้อสำเร็จ ตัวละครจะเป็นของคุณ และคนอื่นจะซื้อไม่ได้อีก
 
 ---
 
@@ -57,7 +74,7 @@ npx serve .
 ```
 Assigment2-B6614690/
 ├── contracts/
-│   └── CharacterShop.sol    # Smart Contract
+│   └── CharacterShop.sol    # Smart Contract (NFT)
 ├── frontend/
 │   ├── assets/              # รูปภาพตัวละคร
 │   │   ├── Cthoni.png
@@ -85,8 +102,10 @@ Assigment2-B6614690/
 | ฟังก์ชัน | คำอธิบาย |
 |---------|---------|
 | `constructor()` | สร้างตัวละคร 10 ตัว พร้อมกำหนดชื่อและราคา |
-| `buyCharacter(uint _id)` | ซื้อตัวละครโดยระบุ ID (1-10) ต้องส่ง ETH ตามราคา |
-| `getAllCharacters()` | ดึงข้อมูลตัวละครทั้งหมด |
+| `buyCharacter(uint _id)` | ซื้อตัวละครโดยระบุ ID (1-10) ซื้อได้ถ้ายังไม่มีเจ้าของ |
+| `getAllCharacters()` | ดึงข้อมูลตัวละครทั้งหมด (id, name, price, owner, isSold) |
+| `getMyCharacters()` | ดูรายการ ID ตัวละครที่ผู้เรียกเป็นเจ้าของ |
+| `getCharactersByOwner(address)` | ดูรายการ ID ตัวละครของ address ใดๆ |
 | `getBalance()` | ดูยอดเงินใน Contract |
 
 ### Event
@@ -101,9 +120,10 @@ Assigment2-B6614690/
 | `connectWallet()` | เชื่อมต่อ MetaMask Wallet |
 | `loadCharacters()` | โหลดข้อมูลตัวละครจาก Contract |
 | `loadPastEvents()` | ดึงประวัติการซื้อย้อนหลังจาก Blockchain |
-| `renderCharacters()` | แสดงผล Card ตัวละครบนหน้าเว็บ |
+| `loadMyCollection()` | โหลดรายการตัวละครที่ผู้ใช้เป็นเจ้าของ |
+| `renderCharacters()` | แสดงผล Card ตัวละครพร้อมสถานะ (AVAILABLE/SOLD/OWNED) |
 | `buyCharacter()` | เรียก Smart Contract เพื่อซื้อตัวละคร |
-| `setupEventListeners()` | ฟัง Event การซื้อแบบ Real-time |
+| `setupEventListeners()` |  Event การซื้อแบบ Real-time |
 | `addLogEntry()` | เพิ่มประวัติการซื้อในตาราง |
 | `updateWalletStatus()` | อัปเดตสถานะการเชื่อมต่อ Wallet |
 
@@ -151,10 +171,20 @@ Assigment2-B6614690/
 
 ---
 
+##  NFT Features
+
+- **Unique Ownership**: แต่ละตัวละครมีเจ้าของได้คนเดียว
+- **Permanent Record**: ความเป็นเจ้าของถูกบันทึกบน Blockchain ตลอดไป
+- **Collection**: ผู้ใช้สามารถสะสม collection ตัวละครหลายตัว
+- **Scarcity**: มีตัวละครจำกัดแค่ 10 ตัว ซื้อหมดก็ไม่มีอีก
+
+---
+
 ##  หมายเหตุ
 
 - ต้อง Deploy Smart Contract ใหม่ทุกครั้งที่แก้ไข code ใน `.sol`
 - ต้องมี ETH ใน Wallet เพียงพอสำหรับค่า Gas และราคาตัวละคร
+- ดู Transactions ได้ที่ Block Explorer เช่น [Sepolia Etherscan](https://sepolia.etherscan.io)
 
 ---
 

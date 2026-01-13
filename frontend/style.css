@@ -229,6 +229,31 @@ body {
     border: 2px solid var(--danger-color);
 }
 
+.available-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: var(--gradient-secondary);
+    color: var(--background-dark);
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.8rem;
+    box-shadow: 0 2px 10px rgba(0, 206, 201, 0.4);
+}
+
+.character-card.owned {
+    opacity: 1;
+    border-color: var(--success-color);
+    box-shadow: 0 0 20px rgba(0, 184, 148, 0.3);
+}
+
+.character-card.owned .sold-badge {
+    color: var(--success-color);
+    border-color: var(--success-color);
+    background: rgba(0, 184, 148, 0.2);
+}
+
 .purchase-badge {
     position: absolute;
     top: 10px;
