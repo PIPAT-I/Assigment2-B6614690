@@ -15,9 +15,14 @@ Character Shop DApp เป็นเว็บแอปพลิเคชันแ
 
 ## 3. การทำงานของระบบ
 
-เมื่อผู้ใช้เปิดหน้าเว็บจะพบปุ่ม Connect Wallet สำหรับเชื่อมต่อ MetaMask ผ่าน Ethers.js เมื่อเชื่อมต่อสำเร็จ ระบบจะเรียกฟังก์ชัน getAllCharacters() จาก Smart Contract เพื่อดึงข้อมูลตัวละครทั้ง 10 ตัวมาแสดงผลเป็น Card พร้อมรูปภาพ ชื่อ ราคา และสถานะ (AVAILABLE/SOLD/OWNED) เมื่อผู้ใช้ต้องการซื้อตัวละครที่ยังว่างก็กดปุ่ม Buy Now ซึ่งจะเรียกฟังก์ชัน buyCharacter(id) พร้อมส่ง ETH ตามราคา Smart Contract จะตรวจสอบว่าตัวละครยังไม่มีเจ้าของแล้วอัปเดตเจ้าของและสถานะ isSold พร้อม Emit Event เพื่อบันทึกธุรกรรม ทั้งนี้ระบบยังดึงประวัติการซื้อย้อนหลังผ่าน queryFilter() และฟัง Event แบบ Real-time ผ่าน contract.on() เพื่อแสดงในตาราง Ownership Logs โดยไม่ต้อง Refresh หน้า
-
-**REPO:** [GitHub - PIPAT-I/Assigment2-B6614690](https://github.com/PIPAT-I/Assigment2-B6614690) ข้อมูลโดยละเอียดจะอยู่ใน repository นี้
+- เมื่อผู้ใช้เปิดหน้าเว็บจะพบปุ่ม **Connect Wallet** สำหรับเชื่อมต่อ MetaMask ผ่าน Ethers.js
+- เมื่อเชื่อมต่อสำเร็จ ระบบจะเรียกฟังก์ชัน `getAllCharacters()` จาก Smart Contract เพื่อดึงข้อมูลตัวละครทั้ง 10 ตัว
+- แสดงผลเป็น Card พร้อมรูปภาพ ชื่อ ราคา และสถานะ (AVAILABLE/SOLD/OWNED)
+- เมื่อผู้ใช้ต้องการซื้อตัวละครที่ยังว่าง กดปุ่ม **Buy Now** ซึ่งจะเรียกฟังก์ชัน `buyCharacter(id)` พร้อมส่ง ETH ตามราคา
+- Smart Contract จะตรวจสอบว่าตัวละครยังไม่มีเจ้าของ แล้วอัปเดตเจ้าของและสถานะ `isSold`
+- Emit Event `CharacterPurchased` เพื่อบันทึกธุรกรรม
+- ระบบดึงประวัติการซื้อย้อนหลังผ่าน `queryFilter()` และฟัง Event แบบ Real-time ผ่าน `contract.on()`
+- แสดงในตาราง **Ownership Logs** โดยไม่ต้อง Refresh หน้า
 
 ---
 
