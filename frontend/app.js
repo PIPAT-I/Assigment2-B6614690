@@ -1,4 +1,4 @@
-const contractAddress = "0xD18266E75Cc920f0Ba0003091B627d8E381C83aC";
+const contractAddress = "0x6E943EE7AEC24Ac1f32a09a756103D29BecfA931";
 const contractABI = [
     {
         "inputs": [],
@@ -76,13 +76,13 @@ const contractABI = [
             },
             {
                 "internalType": "address",
-                "name": "lastOwner",
+                "name": "owner",
                 "type": "address"
             },
             {
-                "internalType": "uint256",
-                "name": "purchaseCount",
-                "type": "uint256"
+                "internalType": "bool",
+                "name": "isSold",
+                "type": "bool"
             }
         ],
         "stateMutability": "view",
@@ -111,18 +111,50 @@ const contractABI = [
                     },
                     {
                         "internalType": "address",
-                        "name": "lastOwner",
+                        "name": "owner",
                         "type": "address"
                     },
                     {
-                        "internalType": "uint256",
-                        "name": "purchaseCount",
-                        "type": "uint256"
+                        "internalType": "bool",
+                        "name": "isSold",
+                        "type": "bool"
                     }
                 ],
                 "internalType": "struct CharacterShop.Character[]",
                 "name": "",
                 "type": "tuple[]"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "getMyCharacters",
+        "outputs": [
+            {
+                "internalType": "uint256[]",
+                "name": "",
+                "type": "uint256[]"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "_owner",
+                "type": "address"
+            }
+        ],
+        "name": "getCharactersByOwner",
+        "outputs": [
+            {
+                "internalType": "uint256[]",
+                "name": "",
+                "type": "uint256[]"
             }
         ],
         "stateMutability": "view",
@@ -188,6 +220,8 @@ async function connectWallet() {
 
         await loadPastEvents();
 
+        await loadMyCollection();
+
         setupEventListeners();
 
         window.ethereum.on('accountsChanged', handleAccountChange);
@@ -244,6 +278,7 @@ function handleAccountChange(accounts) {
         userAddress = accounts[0];
         updateWalletStatus(true);
         loadCharacters();
+        loadMyCollection();
     }
 }
 
@@ -277,37 +312,56 @@ function renderCharacters(characters) {
         const id = Number(char.id);
         const name = char.name;
         const price = char.price;
-        const lastOwner = char.lastOwner;
-        const purchaseCount = Number(char.purchaseCount);
-        const hasBeenPurchased = lastOwner !== "0x0000000000000000000000000000000000000000";
+        const owner = char.owner;
+        const isSold = char.isSold;
+        const isOwner = userAddress && owner.toLowerCase() === userAddress.toLowerCase();
 
         const priceInEth = ethers.formatEther(price);
 
         const card = document.createElement('div');
-        card.className = 'character-card';
+        card.className = `character-card ${isSold ? 'sold' : ''} ${isOwner ? 'owned' : ''}`;
         card.innerHTML = `
             <div class="character-image-container">
                 <img src="assets/${name}.png" alt="${name}" class="character-image" 
                      onerror="this.src='https://via.placeholder.com/300x300?text=${name}'">
-                ${purchaseCount > 0 ? `<div class="purchase-badge">${purchaseCount} sold</div>` : ''}
+                ${isSold ? `<div class="sold-badge">${isOwner ? ' OWNED' : ' SOLD'}</div>` : '<div class="available-badge"> AVAILABLE</div>'}
             </div>
             <div class="character-info">
                 <div class="character-id">#${id}</div>
                 <h3 class="character-name">${name}</h3>
                 <div class="character-price">${priceInEth} ETH</div>
-                ${hasBeenPurchased ? `
+                ${isSold ? `
                     <div class="character-owner">
-                        Last Owner: <span>${lastOwner.slice(0, 6)}...${lastOwner.slice(-4)}</span>
+                        Owner: <span>${owner.slice(0, 6)}...${owner.slice(-4)}</span>
                     </div>
-                ` : ''}
-                <button class="btn btn-buy" onclick="buyCharacter(${id}, '${price}')">
-                    Buy Now
-                </button>
+                    <button class="btn btn-sold" disabled>
+                        ${isOwner ? 'You Own This!' : 'Already Sold'}
+                    </button>
+                ` : `
+                    <button class="btn btn-buy" onclick="buyCharacter(${id}, '${price}')">
+                        Buy Now
+                    </button>
+                `}
             </div>
         `;
 
         charactersGrid.appendChild(card);
     });
+}
+
+async function loadMyCollection() {
+    try {
+        const myCharacterIds = await contract.getMyCharacters();
+        const collectionCount = document.getElementById('collection-count');
+
+        if (collectionCount) {
+            collectionCount.textContent = myCharacterIds.length;
+        }
+
+        console.log('My characters:', myCharacterIds.map(id => Number(id)));
+    } catch (error) {
+        console.error('Error loading my collection:', error);
+    }
 }
 
 async function buyCharacter(characterId, priceInWei) {
@@ -329,15 +383,18 @@ async function buyCharacter(characterId, priceInWei) {
 
         await tx.wait();
 
-        alert(`Successfully purchased character #${characterId}!`);
+        alert(` Congratulations! You now own character #${characterId}!`);
 
         await loadCharacters();
+        await loadMyCollection();
 
     } catch (error) {
         console.error('Error buying character:', error);
 
         if (error.code === 'ACTION_REJECTED') {
             alert('Transaction was rejected by user.');
+        } else if (error.message.includes('Character already owned')) {
+            alert('This character has already been purchased by someone else!');
         } else if (error.message.includes('Incorrect payment amount')) {
             alert('Incorrect payment amount. Please try again.');
         } else {
@@ -358,6 +415,7 @@ function setupEventListeners() {
         addLogEntry(buyer, characterId, name, timestamp);
 
         loadCharacters();
+        loadMyCollection();
     });
 }
 
