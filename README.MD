@@ -11,7 +11,7 @@ Character Shop DApp เป็นเว็บแอปพลิเคชันแ
 ## 2. Contract Address
 
 - **Contract Address:** `0x6E943EE7AEC24Ac1f32a09a756103D29BecfA931`
-- **Network:** Sepolia Testnet
+- **Network:** Hoodi Testnet
 
 ## 3. การทำงานของระบบ
 
@@ -189,7 +189,7 @@ Assigment2-B6614690/
 
 - ต้อง Deploy Smart Contract ใหม่ทุกครั้งที่แก้ไข code ใน `.sol`
 - ต้องมี ETH ใน Wallet เพียงพอสำหรับค่า Gas และราคาตัวละคร
-- ดู Transactions ได้ที่ Block Explorer เช่น [Sepolia Etherscan](https://sepolia.etherscan.io)
+- ดู Transactions ได้ที่ Block Explorer เช่น [hoodi Etherscan](https://hoodi.etherscan.io/)
 
 ---
 
